@@ -1,28 +1,22 @@
 # Phase 1: prove the Swift code compiles on Apple's runners. No signing yet.
 # Phase 2 (later): a separate release.yml will sign + upload to TestFlight.
 name: Build (unsigned)
-
 on:
   push:
     branches: [main]
   pull_request:
-
 jobs:
   build:
     runs-on: macos-15
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_16.4.app || sudo xcode-select -s /Applications/Xcode.app
-
       - name: Install XcodeGen
         run: brew install xcodegen
-
       - name: Generate Xcode project
         run: xcodegen generate
-
       - name: Build (no code signing)
         run: |
           set -o pipefail
@@ -32,3 +26,12 @@ jobs:
             -destination 'generic/platform=iOS' \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO | xcpretty || exit 1
+      - name: Verify build product exists
+        run: |
+          APP=$(find ~/Library/Developer/Xcode/DerivedData -type d -name "Worth.app" | head -1)
+          if [ -z "$APP" ]; then
+            echo "::error::No Worth.app produced — build did not really run"
+            exit 1
+          fi
+          echo "Found: $APP"
+          ls "$APP"
