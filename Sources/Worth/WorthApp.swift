@@ -3,28 +3,51 @@ import SwiftData
 
 @main
 struct WorthApp: App {
-    @AppStorage("hasOnboarded") private var hasOnboarded = false
-
     var body: some Scene {
         WindowGroup {
+            RootView()
+        }
+        .modelContainer(for: [Subscription.self, UsageLog.self, AppMeta.self])
+        // Phase 4 will move this to an App Group container shared with widgets.
+    }
+}
+
+struct RootView: View {
+    @AppStorage("hasOnboarded") private var hasOnboarded = false
+    @Environment(\.modelContext) private var context
+    @Query private var metas: [AppMeta]
+
+    var body: some View {
+        Group {
             if hasOnboarded {
                 HomeView()
             } else {
                 OnboardingView()
             }
         }
-        .modelContainer(for: [Subscription.self, UsageLog.self])
-        // Phase 4 will move this to an App Group container shared with widgets.
+        .task {
+            // Record first launch exactly once; ProGate.founderCutoff compares
+            // against this to decide the founder cohort (Phase 6).
+            if metas.isEmpty {
+                context.insert(AppMeta())
+            }
+        }
     }
 }
 
 struct HomeView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Subscription.nextDueDate) private var subs: [Subscription]
+    @Query private var metas: [AppMeta]
     @State private var showingAdd = false
 
     private var annualWaste: Decimal {
         subs.filter { $0.verdict == .waste }.reduce(0) { $0 + $1.annualCost }
+    }
+
+    // PRO-GATED: Phase 6 caps free-tier subscription count; unlocked for now.
+    private var canAddSubscription: Bool {
+        ProGate.hasPro(metas.first) || subs.count < ProGate.freeSubscriptionLimit
     }
 
     var body: some View {
@@ -48,6 +71,7 @@ struct HomeView: View {
             .navigationTitle("Worth")
             .toolbar {
                 Button { showingAdd = true } label: { Image(systemName: "plus") }
+                    .disabled(!canAddSubscription)
             }
             .sheet(isPresented: $showingAdd) { AddSubscriptionView() }
             .overlay {

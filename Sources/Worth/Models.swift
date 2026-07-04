@@ -52,6 +52,17 @@ final class Subscription {
     }
 }
 
+/// Single-row app metadata. Created once on first launch; the founder
+/// cohort (Phase 6) is decided by comparing firstLaunchDate to ProGate.founderCutoff.
+@Model
+final class AppMeta {
+    var firstLaunchDate: Date
+
+    init(firstLaunchDate: Date = .now) {
+        self.firstLaunchDate = firstLaunchDate
+    }
+}
+
 @Model
 final class UsageLog {
     var timestamp: Date
