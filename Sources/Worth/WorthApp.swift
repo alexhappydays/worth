@@ -36,7 +36,11 @@ struct HomeView: View {
                         .listRowInsets(EdgeInsets())
                 }
                 ForEach(subs) { sub in
-                    SubscriptionRow(sub: sub)
+                    NavigationLink {
+                        SubscriptionDetailView(sub: sub)
+                    } label: {
+                        SubscriptionRow(sub: sub)
+                    }
                 }
                 .onDelete { idx in idx.map { subs[$0] }.forEach(context.delete) }
             }
@@ -79,24 +83,32 @@ struct WasteHeadline: View {
 struct SubscriptionRow: View {
     @Environment(\.modelContext) private var context
     let sub: Subscription
+    @State private var logTrigger = 0
 
     var body: some View {
         HStack(spacing: 14) {
             VerdictRing(verdict: sub.verdict)
             VStack(alignment: .leading, spacing: 2) {
                 Text(sub.name).font(.headline)
-                Text(costLine).font(.subheadline).foregroundStyle(.secondary)
+                Text(costLine)
+                    .font(.subheadline).foregroundStyle(.secondary)
+                    .contentTransition(.numericText())
             }
-            Spacer()
+            Spacer(minLength: 12)
             Button {
-                context.insert(UsageLog(subscription: sub))
+                withAnimation(.snappy) {
+                    context.insert(UsageLog(subscription: sub))
+                    logTrigger += 1
+                }
             } label: {
                 Label(sub.actionLabel, systemImage: sub.symbolName)
                     .font(.footnote.weight(.semibold))
                     .padding(.horizontal, 12).padding(.vertical, 8)
                     .background(.tint.opacity(0.15), in: Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.borderless)
+            .symbolEffect(.bounce, value: logTrigger)
+            .sensoryFeedback(.impact(weight: .medium), trigger: logTrigger)
         }
         .padding(.vertical, 6)
     }
@@ -112,18 +124,10 @@ struct SubscriptionRow: View {
 
 struct VerdictRing: View {
     let verdict: Verdict
-    var color: Color {
-        switch verdict {
-        case .great: .green
-        case .okay: .yellow
-        case .waste: .red
-        case .noData: .gray
-        }
-    }
     var body: some View {
         Circle()
-            .stroke(color, lineWidth: 5)
+            .stroke(verdict.tint, lineWidth: 5)
             .frame(width: 34, height: 34)
-            .overlay(Circle().fill(color.opacity(0.15)))
+            .overlay(Circle().fill(verdict.tint.opacity(0.15)))
     }
 }
