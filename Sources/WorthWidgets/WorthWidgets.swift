@@ -353,6 +353,7 @@ struct QuickLogWidget: Widget {
 struct WorthWidgetBundle: WidgetBundle {
     var body: some Widget {
         QuickLogWidget()
+        VerdictWidget()
     }
 }
 
