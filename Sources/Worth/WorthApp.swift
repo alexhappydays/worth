@@ -3,9 +3,15 @@ import SwiftData
 
 @main
 struct WorthApp: App {
+    @AppStorage("hasOnboarded") private var hasOnboarded = false
+
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            if hasOnboarded {
+                HomeView()
+            } else {
+                OnboardingView()
+            }
         }
         .modelContainer(for: [Subscription.self, UsageLog.self])
         // Phase 4 will move this to an App Group container shared with widgets.
