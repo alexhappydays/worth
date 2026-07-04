@@ -226,7 +226,14 @@ struct QuickLogView: View {
             if let sub = entry.sub {
                 switch family {
                 case .systemMedium: mediumFace(sub)
+                case .accessoryCircular: circularFace(sub)
+                case .accessoryRectangular: rectangularFace(sub)
                 default: smallFace(sub)
+                }
+            } else if family == .accessoryCircular {
+                ZStack {
+                    AccessoryWidgetBackground()
+                    Image(systemName: "sterlingsign")
                 }
             } else {
                 NoSubscriptionsFace()
@@ -303,6 +310,43 @@ struct QuickLogView: View {
         .frame(maxWidth: .infinity)
     }
 
+    /// Lock Screen circular: the whole face is the log button — ring + symbol.
+    private func circularFace(_ sub: QuickLogEntry.Sub) -> some View {
+        Button(intent: LogUseIntent(subscription: sub.entity)) {
+            ZStack {
+                AccessoryWidgetBackground()
+                WidgetRing(progress: sub.progress, tint: sub.tint, lineWidth: 4)
+                    .padding(3)
+                Image(systemName: sub.symbolName)
+                    .font(.body.weight(.semibold))
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func rectangularFace(_ sub: QuickLogEntry.Sub) -> some View {
+        HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 1) {
+                Text(sub.entity.name)
+                    .font(.headline)
+                    .lineLimit(1)
+                Text(sub.costPerUseText.map { "\($0)/use" } ?? "Not used yet")
+                    .font(.caption)
+                Text("^[\(sub.uses) use](inflect: true) this period")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer(minLength: 4)
+            Button(intent: LogUseIntent(subscription: sub.entity)) {
+                Image(systemName: sub.symbolName)
+                    .font(.title3)
+            }
+            .buttonStyle(.bordered)
+            .buttonBorderShape(.circle)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
     private func logButton(_ sub: QuickLogEntry.Sub) -> some View {
         Button(intent: LogUseIntent(subscription: sub.entity)) {
             Label(sub.actionLabel, systemImage: sub.symbolName)
@@ -343,7 +387,8 @@ struct QuickLogWidget: Widget {
         }
         .configurationDisplayName("Quick Log")
         .description("Log a use with one tap — no app launch.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([.systemSmall, .systemMedium,
+                            .accessoryCircular, .accessoryRectangular])
     }
 }
 
@@ -354,6 +399,7 @@ struct WorthWidgetBundle: WidgetBundle {
     var body: some Widget {
         QuickLogWidget()
         VerdictWidget()
+        NextDueWidget()
     }
 }
 
@@ -386,6 +432,20 @@ extension QuickLogEntry {
 }
 
 #Preview("Quick Log medium", as: .systemMedium) {
+    QuickLogWidget()
+} timeline: {
+    QuickLogEntry.sample
+    QuickLogEntry.empty
+}
+
+#Preview("Quick Log circular", as: .accessoryCircular) {
+    QuickLogWidget()
+} timeline: {
+    QuickLogEntry.sample
+    QuickLogEntry.empty
+}
+
+#Preview("Quick Log rectangular", as: .accessoryRectangular) {
     QuickLogWidget()
 } timeline: {
     QuickLogEntry.sample

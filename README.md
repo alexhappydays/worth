@@ -27,7 +27,7 @@ All data local (SwiftData). Built entirely from Windows via GitHub Actions.
 - [x] Phase 1: repo + unsigned CI build
 - [ ] Phase 2: signing + TestFlight upload (release.yml, fastlane)
 - [x] Phase 3: core app — onboarding presets, verdict rings, waste headline
-- [ ] Phase 4: interactive widgets (Quick-Log AppIntent, Verdict, Next Due, Smart Stack)
+- [x] Phase 4: interactive widgets (Quick-Log AppIntent, Verdict, Next Due, Smart Stack)
 - [ ] Phase 5: renewal-eve notifications
 - [ ] Phase 6: StoreKit 2 Pro + Founder's cohort (free forever for week-1 users)
 - [ ] Phase 7: App Store submission
