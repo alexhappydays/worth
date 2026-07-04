@@ -7,8 +7,8 @@ struct WorthApp: App {
         WindowGroup {
             RootView()
         }
-        .modelContainer(for: [Subscription.self, UsageLog.self, AppMeta.self])
-        // Phase 4 will move this to an App Group container shared with widgets.
+        // App Group container shared with the widget extension (Phase 4).
+        .modelContainer(ModelContainerFactory.shared)
     }
 }
 

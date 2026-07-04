@@ -26,7 +26,7 @@ All data local (SwiftData). Built entirely from Windows via GitHub Actions.
 ## Roadmap
 - [x] Phase 1: repo + unsigned CI build
 - [ ] Phase 2: signing + TestFlight upload (release.yml, fastlane)
-- [ ] Phase 3: core app — onboarding presets, verdict rings, waste headline
+- [x] Phase 3: core app — onboarding presets, verdict rings, waste headline
 - [ ] Phase 4: interactive widgets (Quick-Log AppIntent, Verdict, Next Due, Smart Stack)
 - [ ] Phase 5: renewal-eve notifications
 - [ ] Phase 6: StoreKit 2 Pro + Founder's cohort (free forever for week-1 users)
@@ -35,5 +35,6 @@ All data local (SwiftData). Built entirely from Windows via GitHub Actions.
 ## Structure
 - `project.yml` — XcodeGen definition (the CI Mac generates the .xcodeproj)
 - `Sources/Worth` — app
-- `Sources/WorthWidgets` — widget extension (placeholder until Phase 4)
+- `Sources/Shared` — models + App Group model container (compiled into both targets)
+- `Sources/WorthWidgets` — widget extension
 - `.github/workflows/build.yml` — CI

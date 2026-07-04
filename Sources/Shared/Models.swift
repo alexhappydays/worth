@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import SwiftUI
 
 enum BillingCycle: String, Codable, CaseIterable, Identifiable {
     case monthly, yearly, weekly
@@ -108,6 +109,39 @@ extension Subscription {
         case .weekly: price * 52
         case .monthly: price * 12
         case .yearly: price
+        }
+    }
+
+    /// Ring fill fraction: 7+ uses this period fills the ring (matches the
+    /// verdict threshold for .great above).
+    var usageProgress: Double {
+        min(1.0, Double(usesThisPeriod) / 7.0)
+    }
+
+    var daysUntilDue: Int {
+        Calendar.current.dateComponents(
+            [.day], from: .now, to: nextDueDate).day ?? 0
+    }
+}
+
+// MARK: - Shared presentation
+
+extension Verdict {
+    var tint: Color {
+        switch self {
+        case .great: .green
+        case .okay: .yellow
+        case .waste: .red
+        case .noData: .gray
+        }
+    }
+
+    var caption: String {
+        switch self {
+        case .great: "Great value"
+        case .okay: "Getting there"
+        case .waste: "Barely used"
+        case .noData: "No uses logged yet"
         }
     }
 }

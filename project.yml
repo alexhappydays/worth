@@ -17,10 +17,11 @@ targets:
   Worth:
     type: application
     platform: iOS
-    sources: [Sources/Worth]
+    sources: [Sources/Worth, Sources/Shared]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.alexhappydays.worth
+        CODE_SIGN_ENTITLEMENTS: Sources/Worth/Worth.entitlements
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_CFBundleDisplayName: Worth
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
@@ -32,10 +33,11 @@ targets:
   WorthWidgets:
     type: app-extension
     platform: iOS
-    sources: [Sources/WorthWidgets]
+    sources: [Sources/WorthWidgets, Sources/Shared]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.alexhappydays.worth.widgets
+        CODE_SIGN_ENTITLEMENTS: Sources/WorthWidgets/WorthWidgets.entitlements
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: Worth Widgets
         INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier: com.apple.widgetkit-extension

@@ -1,39 +1,6 @@
 import SwiftUI
 import SwiftData
 
-extension Verdict {
-    var tint: Color {
-        switch self {
-        case .great: .green
-        case .okay: .yellow
-        case .waste: .red
-        case .noData: .gray
-        }
-    }
-
-    var caption: String {
-        switch self {
-        case .great: "Great value"
-        case .okay: "Getting there"
-        case .waste: "Barely used"
-        case .noData: "No uses logged yet"
-        }
-    }
-}
-
-extension Subscription {
-    /// Ring fill fraction: 7+ uses this period fills the ring (matches the
-    /// verdict threshold for .great in Models.swift).
-    var usageProgress: Double {
-        min(1.0, Double(usesThisPeriod) / 7.0)
-    }
-
-    var daysUntilDue: Int {
-        Calendar.current.dateComponents(
-            [.day], from: .now, to: nextDueDate).day ?? 0
-    }
-}
-
 struct SubscriptionDetailView: View {
     @Environment(\.modelContext) private var context
     @Bindable var sub: Subscription
