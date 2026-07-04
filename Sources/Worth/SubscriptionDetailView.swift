@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 struct SubscriptionDetailView: View {
     @Environment(\.modelContext) private var context
@@ -50,6 +51,7 @@ struct SubscriptionDetailView: View {
                         withAnimation(.easeOut(duration: 0.6)) {
                             ringProgress = sub.usageProgress
                         }
+                        WidgetCenter.shared.reloadAllTimelines()
                     }
                 }
             }
@@ -60,7 +62,9 @@ struct SubscriptionDetailView: View {
         .toolbar {
             Button("Edit") { showingEdit = true }
         }
-        .sheet(isPresented: $showingEdit) {
+        .sheet(isPresented: $showingEdit, onDismiss: {
+            WidgetCenter.shared.reloadAllTimelines()
+        }) {
             EditSubscriptionView(sub: sub)
         }
         .sensoryFeedback(.impact(weight: .medium), trigger: logTrigger)
@@ -127,6 +131,7 @@ struct SubscriptionDetailView: View {
             withAnimation(.easeOut(duration: 0.6)) {
                 ringProgress = sub.usageProgress
             }
+            WidgetCenter.shared.reloadAllTimelines()
         } label: {
             Label(sub.actionLabel, systemImage: sub.symbolName)
                 .font(.headline)

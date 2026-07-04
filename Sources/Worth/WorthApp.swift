@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 @main
 struct WorthApp: App {
@@ -65,7 +66,10 @@ struct HomeView: View {
                         SubscriptionRow(sub: sub)
                     }
                 }
-                .onDelete { idx in idx.map { subs[$0] }.forEach(context.delete) }
+                .onDelete { idx in
+                    idx.map { subs[$0] }.forEach(context.delete)
+                    WidgetCenter.shared.reloadAllTimelines()
+                }
             }
             .listStyle(.plain)
             .navigationTitle("Worth")
@@ -124,6 +128,7 @@ struct SubscriptionRow: View {
                     context.insert(UsageLog(subscription: sub))
                     logTrigger += 1
                 }
+                WidgetCenter.shared.reloadAllTimelines()
             } label: {
                 Label(sub.actionLabel, systemImage: sub.symbolName)
                     .font(.footnote.weight(.semibold))

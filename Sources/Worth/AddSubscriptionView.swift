@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 struct SubscriptionPreset: Identifiable {
     let id = UUID()
@@ -102,6 +103,7 @@ struct AddSubscriptionView: View {
                             name: name, price: price, cycle: cycle,
                             actionLabel: actionLabel, symbolName: symbol,
                             nextDueDate: nextDue))
+                        WidgetCenter.shared.reloadAllTimelines()
                         dismiss()
                     }
                     .disabled(name.isEmpty || price <= 0)

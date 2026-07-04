@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 /// First-launch-only flow. Goal: first subscription added in under 30 seconds.
 struct OnboardingView: View {
@@ -154,6 +155,7 @@ private struct PresetPickerPage: View {
                 symbolName: preset.symbol,
                 nextDueDate: nextDue))
         }
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }
 

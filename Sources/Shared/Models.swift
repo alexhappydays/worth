@@ -30,6 +30,8 @@ enum Verdict {
 
 @Model
 final class Subscription {
+    /// Stable identity for AppIntents/widget configuration (Phase 4).
+    var uuid: UUID = UUID()
     var name: String
     var price: Decimal
     var cycle: BillingCycle
